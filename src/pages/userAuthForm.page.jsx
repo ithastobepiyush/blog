@@ -1,4 +1,6 @@
+import { Link } from "react-router-dom"
 import InputBox from "../components/input.component"
+import googleIcon from "../imgs/google.png"
 
 
 const UserAuthForm = ({ type }) => {
@@ -42,7 +44,34 @@ const UserAuthForm = ({ type }) => {
                     {type.replace("-", " ")}
                 </button>
 
-                <div></div>
+                {/* OR seperator between the signin and signup */}
+                <div className="relative flex gap-2 my-10 w-full items-center opacity-10 uppercase text-black font-bold ">
+                    <hr className="w-1/2 border-black"/>
+                    <p>or</p>
+                    <hr className="w-1/2 border-black"/>
+                </div>
+
+                <button className="btn-dark flex items-center justify-center gap-4 w-[90%] center">
+                    <img src={googleIcon} className="w-5" />
+                    continue with google
+                </button>
+
+                {
+                    type === "sign-in" ?
+                    <p className="mt-6 text-dark-grey text-xl text-center">
+                        Don't have an account?
+                        <Link to="/signup" className="underline texxt-black text-xl ml-1">
+                        Join us today
+                        </Link>
+                    </p>
+                    :
+                    <p className="mt-6 text-dark-grey text-xl text-center">
+                        Already a member
+                        <Link to="/signin" className="underline texxt-black text-xl ml-1">
+                        Sign in here
+                        </Link>
+                    </p>
+                }
                 
                 
             </form>
