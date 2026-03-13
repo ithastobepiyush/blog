@@ -6,39 +6,53 @@ import { useRef } from "react"
 
 const UserAuthForm = ({ type }) => {
 
+    // auth form storing form via refernce(ref) in form
     const authForm = useRef()
 
+    // handleing click events of submit button ----->
     const handleSubmit = (e) =>{
 
         e.preventDefault()
-        // retrieve data from form/ formatting Data from data
+
+
+        // regex for email &password 
+        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+        // retrieving data from form /linked via ref = authForm
         let form = new FormData(authForm.current)
+
+        // formData is empty object for storing formData
         let formData = {}
-        
-        for(let [key, value] of form.entries()){
-            formData[key]= value
+
+        // loop for iterating through the all keys in the form input
+        for(let[key, value] of form.entries()){
+            // 3 times iteration and then storing in the form of key values
+            formData[key] = value
         }
+        console.log(formData);
         // console.log(form);
-        // console.log(formData);
 
 
+        // destructure data from the form data userAuthForm
         let {fullname, email, password} = formData
 
-        // validation of form frontend
-        if(fullname.length < 3){
-        return res.status(403).json({ "error": "Full name must be at least 3 letters long" })      
+        // form validation in frontend
+        if(fullname){
+            if(fullname.length < 3){
+                return console.log({ "error": "Full name must be at least 3 letters long" })
+            }
         }
         if(!email){
-            return res.status(403).json({ "error": "Enter email" })
+            return console.log({ "error": "Enter email" })
         }
         if(!emailRegex.test(email)){
-            return res.status(403).json({ "error": "Email is invalid "})
+            return console.log({ "error": "Email is invalid "})
         }
         if(!passwordRegex.test(password)){
-            return res.status(403).json({ "error": "Password should be 6 to 20  character long with a numeric, 1 lowercase and 1 uppercase letter" })
+            return console.log({ "error": "Password should be 6 to 20  character long with a numeric, 1 lowercase and 1 uppercase letter" })
         }
         
-
     }
 
     return(
@@ -48,7 +62,13 @@ const UserAuthForm = ({ type }) => {
             <section className="h-cover flex items-center justify-center">
 
                 {/* HTML FORM for USER AUTHENTICATION */}
-                <form ref={authForm} action="" className="w-[80%] max-w-[400px] ">
+                <form
+                // ref hook for the reference in the react hook
+                    ref={authForm}
+                    action=""
+                    className="w-[80%] max-w-[400px] "
+                    >
+                        
                     <h1 className="text-4xl font-gelasio  text-center mb-24">
                         {type == "sign-in" ? "We’ve been waiting for you" : "Become part of the community"}
                     </h1>
@@ -74,7 +94,8 @@ const UserAuthForm = ({ type }) => {
                     <InputBox 
                             name="password"
                             type="password"
-                            placeholder="Password"
+                            placeholder
+                            ="Password"
                             icon="fi fi-rr-key"
                         />
 
