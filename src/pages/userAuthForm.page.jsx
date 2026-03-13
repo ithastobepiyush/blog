@@ -2,16 +2,53 @@ import { Link } from "react-router-dom"
 import InputBox from "../components/input.component"
 import googleIcon from "../imgs/google.png"
 import AnimationWrapper from "../common/page-animation"
-
+import { useRef } from "react"
 
 const UserAuthForm = ({ type }) => {
+
+    const authForm = useRef()
+
+    const handleSubmit = (e) =>{
+
+        e.preventDefault()
+        // retrieve data from form/ formatting Data from data
+        let form = new FormData(authForm.current)
+        let formData = {}
+        
+        for(let [key, value] of form.entries()){
+            formData[key]= value
+        }
+        // console.log(form);
+        // console.log(formData);
+
+
+        let {fullname, email, password} = formData
+
+        // validation of form frontend
+        if(fullname.length < 3){
+        return res.status(403).json({ "error": "Full name must be at least 3 letters long" })      
+        }
+        if(!email){
+            return res.status(403).json({ "error": "Enter email" })
+        }
+        if(!emailRegex.test(email)){
+            return res.status(403).json({ "error": "Email is invalid "})
+        }
+        if(!passwordRegex.test(password)){
+            return res.status(403).json({ "error": "Password should be 6 to 20  character long with a numeric, 1 lowercase and 1 uppercase letter" })
+        }
+        
+
+    }
+
     return(
         // to make the animation consistent throught the pages
         <AnimationWrapper keyValue={type}>
             {/* Section of Form for user authentication [signin/signup] */}
             <section className="h-cover flex items-center justify-center">
 
-                <form action="" className="w-[80%] max-w-[400px] ">
+                {/* HTML FORM for USER AUTHENTICATION */}
+                <form ref={authForm} action="" className="w-[80%] max-w-[400px] ">
                     <h1 className="text-4xl font-gelasio  text-center mb-24">
                         {type == "sign-in" ? "We’ve been waiting for you" : "Become part of the community"}
                     </h1>
@@ -44,6 +81,7 @@ const UserAuthForm = ({ type }) => {
                     <button 
                         className="btn-dark center mt-14"
                         type="submit"
+                        onClick={handleSubmit}
                         >
                         {type.replace("-", " ")}
                     </button>
