@@ -3,17 +3,35 @@ import InputBox from "../components/input.component"
 import googleIcon from "../imgs/google.png"
 import AnimationWrapper from "../common/page-animation"
 import { useRef } from "react"
+// for notification
+import { Toaster, toast } from "react-hot-toast"
+import axios from "axios"
 
 const UserAuthForm = ({ type }) => {
 
     // auth form storing form via refernce(ref) in form
     const authForm = useRef()
 
+    // Connection to server/backend through axios client
+    const userAuthThroughServer = (serverRoute, formData) => {
+        // since this post is a promise --> use .then()
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
+        .then(({data}) => {
+            console.log(data);
+            
+        }).catch(({response}) => {
+            toast.error(response.data.error)
+        })
+    }
+
+
+
     // handleing click events of submit button ----->
     const handleSubmit = (e) =>{
 
         e.preventDefault()
 
+        let serverRoute = type == "sign-in" ? "/signin" : "/signup"
 
         // regex for email &password 
         let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -30,8 +48,17 @@ const UserAuthForm = ({ type }) => {
             // 3 times iteration and then storing in the form of key values
             formData[key] = value
         }
-        console.log(formData);
+
+
+
+
+
+        // to see the form data console
         // console.log(form);
+        // console.log(formData);
+
+
+
 
 
         // destructure data from the form data userAuthForm
@@ -40,27 +67,36 @@ const UserAuthForm = ({ type }) => {
         // form validation in frontend
         if(fullname){
             if(fullname.length < 3){
-                return console.log({ "error": "Full name must be at least 3 letters long" })
+                return toast.error( "Full name must be at least 3 letters long")
             }
         }
         if(!email){
-            return console.log({ "error": "Enter email" })
+            return toast.error( "Enter email")
         }
         if(!emailRegex.test(email)){
-            return console.log({ "error": "Email is invalid "})
+            return toast.error( "Email is invalid" )
         }
         if(!passwordRegex.test(password)){
-            return console.log({ "error": "Password should be 6 to 20  character long with a numeric, 1 lowercase and 1 uppercase letter" })
+            return toast.error( "Password should be 6 to 20  character long with a numeric, 1 lowercase and 1 uppercase letter")
         }
+
+
+
+        userAuthThroughServer(serverRoute, formData)
         
     }
 
     return(
         // to make the animation consistent throught the pages
         <AnimationWrapper keyValue={type}>
+
             {/* Section of Form for user authentication [signin/signup] */}
             <section className="h-cover flex items-center justify-center">
-
+                
+                                
+                {/* Notification pop from react-hot-toast */}
+                <Toaster />
+                
                 {/* HTML FORM for USER AUTHENTICATION */}
                 <form
                 // ref hook for the reference in the react hook
