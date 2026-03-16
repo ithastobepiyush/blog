@@ -9,25 +9,22 @@ import axios from "axios"
 
 const UserAuthForm = ({ type }) => {
 
-    // auth form storing form via refernce(ref) in form
-    const authForm = useRef()
+    // const authForm = useRef()
 
-    // Connection to server/backend through axios client
     const userAuthThroughServer = (serverRoute, formData) => {
-        // since this post is a promise --> use .then()
+
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
         .then(({data}) => {
             console.log(data);
-            
-        }).catch(({response}) => {
+        })
+        .catch(({ response }) => {
             toast.error(response.data.error)
         })
+
     }
 
-
-
-    // handleing click events of submit button ----->
-    const handleSubmit = (e) =>{
+    // to access mouse and event function --> (e)
+    const handleSubmit = (e) => {
 
         e.preventDefault()
 
@@ -37,53 +34,42 @@ const UserAuthForm = ({ type }) => {
         let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
-        // retrieving data from form /linked via ref = authForm
-        let form = new FormData(authForm.current)
-
-        // formData is empty object for storing formData
+        // formData Retrival
+        let form = new FormData(formElement)
+        // console.log(form);
+        
         let formData = {}
-
-        // loop for iterating through the all keys in the form input
-        for(let[key, value] of form.entries()){
-            // 3 times iteration and then storing in the form of key values
+        // loop through the form and store values in formData{}
+        for(let [key, value] of form.entries()){
             formData[key] = value
         }
-
-
-
-
-
-        // to see the form data console
-        // console.log(form);
         // console.log(formData);
 
 
-
-
-
-        // destructure data from the form data userAuthForm
+        // destructure the Form Data from formData{}
         let {fullname, email, password} = formData
 
-        // form validation in frontend
+        // validating the data from frontend
         if(fullname){
-            if(fullname.length < 3){
-                return toast.error( "Full name must be at least 3 letters long")
+            if (fullname.length < 3) {
+                return toast.error("Full Name must be 3 letters long")
             }
         }
-        if(!email){
-            return toast.error( "Enter email")
+        if (!email) {
+            return toast.error("Enter email")
         }
-        if(!emailRegex.test(email)){
-            return toast.error( "Email is invalid" )
+        if (!emailRegex.test(email)) {
+            return toast.error("Email is invalid")
         }
-        if(!passwordRegex.test(password)){
-            return toast.error( "Password should be 6 to 20  character long with a numeric, 1 lowercase and 1 uppercase letter")
+        if (!passwordRegex.test(password)) {
+            return toast.error("Password should be 6 to 20 charcters long with a numeric, 1 lowercase and 1 uppercase")
         }
-
 
 
         userAuthThroughServer(serverRoute, formData)
         
+        
+
     }
 
     return(
@@ -96,11 +82,10 @@ const UserAuthForm = ({ type }) => {
                                 
                 {/* Notification pop from react-hot-toast */}
                 <Toaster />
-                
                 {/* HTML FORM for USER AUTHENTICATION */}
                 <form
                 // ref hook for the reference in the react hook
-                    ref={authForm}
+                    id="formElement"
                     action=""
                     className="w-[80%] max-w-[400px] "
                     >
