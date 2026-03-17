@@ -11,65 +11,53 @@ const UserAuthForm = ({ type }) => {
 
     // const authForm = useRef()
 
-    const userAuthThroughServer = (serverRoute, formData) => {
-
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
-        .then(({data}) => {
+    const userAuthThroughServer = async (serverRoute, formData) => {
+        try {
+            const { data } = await axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData);
             console.log(data);
-        })
-        .catch(({ response }) => {
-            toast.error(response.data.error)
-        })
-
+        } catch (err) {
+            // Safely handling Axios errors 
+            if (err.response && err.response.data && err.response.data.error) {
+                toast.error(err.response.data.error);
+            } else {
+                toast.error(err.message || "Network error. Please try again.");
+            }
+        }
     }
 
     // to access mouse and event function --> (e)
     const handleSubmit = (e) => {
+        e.preventDefault();
 
-        e.preventDefault()
+        let serverRoute = type == "sign-in" ? "/signin" : "/signup";
 
-        let serverRoute = type == "sign-in" ? "/signin" : "/signup"
-
-        // regex for email &password 
+        // regex for email & password 
         let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
-        // formData Retrival
-        let form = new FormData(formElement)
-        // console.log(form);
+        // formData Retrieval safely using the event target (the form itself)
+        let form = new FormData(e.target);
         
-        let formData = {}
-        // loop through the form and store values in formData{}
-        for(let [key, value] of form.entries()){
-            formData[key] = value
-        }
-        // console.log(formData);
+        let formData = Object.fromEntries(form.entries());
+        let { fullname, email, password } = formData;
 
-
-        // destructure the Form Data from formData{}
-        let {fullname, email, password} = formData
-
-        // validating the data from frontend
-        if(fullname){
-            if (fullname.length < 3) {
-                return toast.error("Full Name must be 3 letters long")
+        // Validating the data from frontend
+        if (type !== "sign-in") {
+            if (!fullname || fullname.trim().length < 3) {
+                return toast.error("Full Name must be at least 3 letters long");
             }
         }
         if (!email) {
-            return toast.error("Enter email")
+            return toast.error("Enter email");
         }
         if (!emailRegex.test(email)) {
-            return toast.error("Email is invalid")
+            return toast.error("Email is invalid");
         }
         if (!passwordRegex.test(password)) {
-            return toast.error("Password should be 6 to 20 charcters long with a numeric, 1 lowercase and 1 uppercase")
+            return toast.error("Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase");
         }
 
-
-        userAuthThroughServer(serverRoute, formData)
-        
-        
-
+        userAuthThroughServer(serverRoute, formData);
     }
 
     return(
@@ -84,10 +72,9 @@ const UserAuthForm = ({ type }) => {
                 <Toaster />
                 {/* HTML FORM for USER AUTHENTICATION */}
                 <form
-                // ref hook for the reference in the react hook
                     id="formElement"
-                    action=""
-                    className="w-[80%] max-w-[400px] "
+                    className="w-[80%] max-w-[400px]"
+                    onSubmit={handleSubmit}
                     >
                         
                     <h1 className="text-4xl font-gelasio  text-center mb-24">
@@ -123,7 +110,6 @@ const UserAuthForm = ({ type }) => {
                     <button 
                         className="btn-dark center mt-14"
                         type="submit"
-                        onClick={handleSubmit}
                         >
                         {type.replace("-", " ")}
                     </button>
