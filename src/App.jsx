@@ -12,6 +12,7 @@ import Navbar from "./components/navbar.component";
 import UserAuthForm from "./pages/userAuthForm.page";
 import { createContext, useEffect, useState } from "react";
 import { lookInSession } from "./common/session";
+import Editor from "./pages/editor.page";
 
 /**
  * Global User Context
@@ -38,6 +39,7 @@ const App = () => {
         // Wraps the application routing with UserContext to make auth state globally accessible
         <UserContext.Provider value={{userAuth, setUserAuth}}>
             <Routes>
+                <Route path="/editor" element={<Editor />} />
                 {/* 
                   Navbar UI is rendered on every path under "/".
                   Nested child routes render inside the <Outlet /> of Navbar component. 
