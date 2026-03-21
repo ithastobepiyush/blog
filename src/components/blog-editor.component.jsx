@@ -3,18 +3,18 @@ import logo from "../imgs/logo.png"
 import AnimationWrapper from "../common/page-animation"
 import defaultBanner from '../imgs/blog-banner.png'
 import { uploadImg } from "../common/aws"
-import { useRef } from "react"
+import { useContext, useRef } from "react"
 import {Toaster, toast} from 'react-hot-toast'
+import { EditorContext } from "../pages/editor.page"
 
 const BlogEditor = () => {
 
     let blogBannerRef = useRef()
+    let {blog, blog: {title, banner, content, tags, des}, setBlog} = useContext(EditorContext)
+
 
     const handleBannerUpload = async (e) => {
-
         const img = e.target.files[0]
-
-        // console.log(img)
 
         if(img){
             let loadingToast = toast.loading("Uploading ...")
@@ -24,6 +24,8 @@ const BlogEditor = () => {
                     toast.dismiss(loadingToast)
                     toast.success("Uploaded 👍🏻")
                     blogBannerRef.current.src = url
+
+                    setBlog({ ...blog, banner: url})
                 }
             } catch(err){
                 toast.dismiss(loadingToast)
@@ -39,6 +41,17 @@ const BlogEditor = () => {
         }
         
     }
+    const handleTitleChange = (e) => {
+
+        let input = e.target
+
+        // console.log(input.scrollHeight);
+        input.style.height = 'auto'
+        input.style.height = input.scrollHeight + "px"
+
+        setBlog({ ...blog, title: input.value })
+
+    }
 
     return(
         <>
@@ -47,7 +60,7 @@ const BlogEditor = () => {
                     <img src={logo}/>
                 </Link>
                 <p className="max-md:hidden text-black line-clamp-1 w-full">
-                    New blog
+                    {title.length ? title : "New Blog"}
                 </p>
                 <div className=" flex gap-4 ml-auto">
                     <button className="btn-dark py-2">
@@ -86,10 +99,14 @@ const BlogEditor = () => {
 
                         </div>
 
+                        {/* text area for blog title */}
                         <textarea
                             placeholder="Blog Title"
-                            className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
+                            className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-30"
+
                             onKeyDown={handleTitleKeyDown}
+                            onChange={handleTitleChange}
+
                         >
 
                         </textarea>

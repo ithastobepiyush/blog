@@ -13,7 +13,7 @@ export const uploadImg = async (img) => {
         // upload image to s3
         await axios.put(uploadUrl, img, {
             headers: {
-                "Content-Type": img.type || "multipart/form-data"
+                "Content-Type": "image/jpeg"
             }
         })
         // extracting the useful url only
