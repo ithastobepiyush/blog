@@ -26,12 +26,14 @@ const Editor = () => {
 
     const [editorState, setEditorState] = useState("editor")
 
+    const [textEditor, setTextEditor] = useState({isReady: false})
+
     let {userAuth: {accessToken}} = useContext(UserContext)
 
     return(
 
-        
-        <EditorContext.Provider value={{blog, setBlog, editorState, setEditorState}}>
+
+        <EditorContext.Provider value={{blog, setBlog, editorState, setEditorState, textEditor, setTextEditor}}>
             {
                 accessToken === null ? <Navigate to="/signin" />
                 : editorState == "editor" ? <BlogEditor /> : <PublishForm />
