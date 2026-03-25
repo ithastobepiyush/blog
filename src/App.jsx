@@ -13,6 +13,7 @@ import UserAuthForm from "./pages/userAuthForm.page";
 import { createContext, useEffect, useState } from "react";
 import { lookInSession } from "./common/session";
 import Editor from "./pages/editor.page";
+import HomePage from "./pages/home.page";
 
 /**
  * Global User Context
@@ -44,10 +45,16 @@ const App = () => {
                   Navbar UI is rendered on every path under "/".
                   Nested child routes render inside the <Outlet /> of Navbar component. 
                 */}
+
                 <Route path="/" element={<Navbar />} >
+                    
+                    <Route index element={<HomePage />} />
+
                     <Route path="signin" element={<UserAuthForm type="sign-in" />} />
+
                     <Route path="signup" element={<UserAuthForm type="sign-up" />} />
                 </Route>
+
             </Routes>
         </UserContext.Provider>
     )
