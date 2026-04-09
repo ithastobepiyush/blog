@@ -14,7 +14,7 @@ const PublishForm = () => {
   let tagLimit = 10
   
   // destructuring of context
-  let {blog, blog:{banner, title, tags, des, content}, setEditorState, setBlog} = useContext(EditorContext)z
+  let {blog, blog:{banner, title, tags, des, content}, setEditorState, setBlog} = useContext(EditorContext)
   
   let {userAuth: {accessToken} } = useContext(UserContext)
   
